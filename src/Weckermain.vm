@@ -1,0 +1,15 @@
+#foreach($method in $SimpleMethods)
+	public $method.type $method.name (){
+		return new $method.type (#foreach($para in $method.paras)#if($velocityCount > 1) ,#end$para#end);
+	}
+	
+#end
+
+#foreach($class in $SimpleMethods)
+	public final class $class.type {
+		private $class.type (){
+		}
+		
+		
+	}
+#end
