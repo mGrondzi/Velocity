@@ -1,3 +1,16 @@
+package alarmclock;
+
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.LinkedList;
+
+public final class AlarmBuilder {
+
+	private static final String ALARM_DATE_INVALID_MSG = "Alarm date is not valid.";
+
+	public AlarmBuilder() {
+	}
+    
 #foreach($method in $SimpleMethods)
 	public $method.type $method.name (){
 		return new $method.type (#foreach($para in $method.paras)#if($velocityCount > 1) ,#end$para#end);
@@ -5,11 +18,35 @@
 	
 #end
 
-#foreach($class in $SimpleMethods)
+#foreach($class in $SimpleClasses)
 	public final class $class.type {
-		private $class.type (){
-		}
+	
+	#foreach($attribute in $class.attributes)
+	$attribute.mod $attribute.type $attribute.name;	
+	#end
 		
-		
-	}
+	#foreach($const in $class.constructors)
+	$const.mod $const.type (#foreach($para in $const.paras)#if($velocityCount > 1) ,#end$para#end){
+	#foreach( $para in $const.paras )
+#foreach( $stringpart in $para.split("[ ]") )
+#if( $foreach.index == 1 )
+	this.$stringpart = $stringpart; 
 #end
+	#end
+#end
+	}
+	#end
+	
+	#foreach($method in $class.methods)
+	$method.mod $method.type $method.name (#foreach($para in $method.paras)#if($velocityCount > 1) ,#end$para#end){
+	#foreach($textline in $method.lines)
+		$textline
+	#end
+	}
+	
+	#end
+}
+
+
+#end
+}
