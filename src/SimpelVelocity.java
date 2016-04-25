@@ -22,10 +22,7 @@ public class SimpelVelocity
         /*  next, get the Template  */
         Template t = ve.getTemplate( "/src/Weckermain.vm" );
         /*  create a context and add data */
-        VelocityContext context = new VelocityContext();
-        
-        /* now render the template into a StringWriter */
-        
+        VelocityContext context = new VelocityContext();        
         
         ArrayList<Map> classlist = new ArrayList();
         ArrayList<Map> methodlist = new ArrayList();//Liste aller Methoden
@@ -35,11 +32,11 @@ public class SimpelVelocity
         VeloMethodBuilder vM = new VeloMethodBuilder("public", "WeekScope", "every");
         vM.addBody("return new Weakscope(new GregorianCalendar(), new WeekAndDayMemorie());");
         methodlist.add(vM.getTheMethod());        
-      //Neue Methode
+        //Neue Methode
         vM = new VeloMethodBuilder("public", "MinuteScope", "in");
         vM.addBody("return new MinuteScope();");
         methodlist.add(vM.getTheMethod());
-        
+        //Neue Methode
         vM = new VeloMethodBuilder("public", "TimeWrapperScope", "on");
         vM.addPara("Day... days");
         vM.addBody("WeekAndDayMemorie wadm = new WeekAndDayMemorie();");
@@ -50,11 +47,11 @@ public class SimpelVelocity
         vM.addBody("if (oldVal > c.get(Calendar.DAY_OF_MONTH)) {c.add(Calendar.WEEK_OF_YEAR, 1);}");
         vM.addBody("return new TimeWrapperScope(c, wadm);");
         methodlist.add(vM.getTheMethod());
-        
+        //Neue Methode
         vM = new VeloMethodBuilder("public", "YearScope", "on");
         vM.addBody("return new YearScope(new GregorianCalendar());");
         methodlist.add(vM.getTheMethod());
-        
+        //Neue Methode
         vM = new VeloMethodBuilder("public", "TimeWrapperScope", "today");
         vM.addBody("return new TimeWrapperScope(new GregorianCalendar(), null);");
         methodlist.add(vM.getTheMethod());
