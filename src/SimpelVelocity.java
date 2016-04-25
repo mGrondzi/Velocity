@@ -1,3 +1,4 @@
+import java.io.FileWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -196,6 +197,9 @@ public class SimpelVelocity
         StringWriter writer = new StringWriter();
         t.merge( context, writer );
         
+        FileWriter fw = new FileWriter("AlarmBuilder.java");
+        fw.write(writer.toString());
+        fw.close();
         System.out.println(writer);
     }
 }
