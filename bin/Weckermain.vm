@@ -10,13 +10,15 @@ public final class AlarmBuilder {
 
 	public AlarmBuilder() {
 	}
-    
-#foreach($method in $SimpleMethods)
-	public $method.type $method.name (){
-		return new $method.type (#foreach($para in $method.paras)#if($velocityCount > 1) ,#end$para#end);
+	
+	#foreach($method in $SimpleMethods)
+$method.mod $method.type $method.name (#foreach($para in $method.paras)#if($velocityCount > 1) ,#end$para#end){
+#foreach($textline in $method.lines)
+		$textline
+#end
 	}
 	
-#end
+	#end
 
 #foreach($class in $SimpleClasses)
 	public final class $class.type {
@@ -34,6 +36,9 @@ public final class AlarmBuilder {
 #end
 	#end
 #end
+#foreach( $attr in $const.attributes )
+		this.$attr.name = $const.values[$foreach.index]; 
+	#end
 	}
 	#end
 	

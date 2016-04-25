@@ -1,8 +1,0 @@
-#foreach($method in $SimpleMethods)
-	$method.mod $method.type $method.name (){
-		#foreach($textline in $method.lines)
-			$textline
-		#end
-	}
-	
-#end

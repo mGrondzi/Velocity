@@ -6,7 +6,7 @@ public class VeloClassBuilder {
 
 	private String type;
 	private ArrayList<Map> attributlist = new ArrayList();
-	private ArrayList<VeloConstructorBuilder> constructorArraylist = new ArrayList();
+	private ArrayList<VeloNoParaConstBuilder> constructorArraylist = new ArrayList();
 	private ArrayList<VeloMethodBuilder> methodArraylist = new ArrayList();
 	
 	public VeloClassBuilder(String type)
@@ -28,6 +28,11 @@ public class VeloClassBuilder {
 		constructorArraylist.add(new VeloConstructorBuilder(mod, this.type, paras));
 	}
 	
+	public void addNewNoParaConstructor(String mod,String... paras)
+	{
+		constructorArraylist.add(new VeloNoParaConstBuilder(mod, this.type, this.attributlist, paras));
+	}
+	
 	public void addNewMethod(String mod, String type, String name)
 	{
 		methodArraylist.add(new VeloMethodBuilder(mod, type, name));
@@ -45,7 +50,7 @@ public class VeloClassBuilder {
 		newclass.put("type", type);
         newclass.put("attributes", attributlist);
         
-        for(VeloConstructorBuilder c : constructorArraylist)
+        for(VeloNoParaConstBuilder c : constructorArraylist)
         	constlist.add(c.getTheConstructor());
         newclass.put("constructors", constlist);
         

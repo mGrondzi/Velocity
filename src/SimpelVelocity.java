@@ -27,106 +27,38 @@ public class SimpelVelocity
         
         
         ArrayList<Map> classlist = new ArrayList();
-        Map newclass = new HashMap();
-        ArrayList<Map> attributlist = new ArrayList();
-        Map attribute = new HashMap();
         ArrayList<Map> methodlist = new ArrayList();//Liste aller Methoden
-        Map method = new HashMap();
-        ArrayList methodpara = new ArrayList();
-        ArrayList methodbody = new ArrayList();
+
         
          //Neue Methode
-        method = new HashMap();
-        method.put("type","WeekScope");
-        method.put("name", "every");
+        VeloMethodBuilder vM = new VeloMethodBuilder("public", "WeekScope", "every");
+        vM.addBody("return new Weakscope(new GregorianCalendar(), new WeekAndDayMemorie());");
+        methodlist.add(vM.getTheMethod());        
+      //Neue Methode
+        vM = new VeloMethodBuilder("public", "MinuteScope", "in");
+        vM.addBody("return new MinuteScope();");
+        methodlist.add(vM.getTheMethod());
         
-        methodpara.add("new GregorianCalendar()");
-        methodpara.add("new WeekAndDayMemorie()");
-        method.put("paras", methodpara);
-        methodlist.add(method);
+        vM = new VeloMethodBuilder("public", "TimeWrapperScope", "on");
+        vM.addPara("Day... days");
+        vM.addBody("WeekAndDayMemorie wadm = new WeekAndDayMemorie();");
+        vM.addBody("GregorianCalendar c = new GregorianCalendar();");
+        vM.addBody("for (Day day : days) {wadm.addDay(day);}");
+        vM.addBody("int oldVal = c.get(Calendar.DAY_OF_MONTH);");
+        vM.addBody("c.set(Calendar.DAY_OF_WEEK, (days[0].ordinal() + 2 > 7) ? 1 : days[0].ordinal() + 2);");
+        vM.addBody("if (oldVal > c.get(Calendar.DAY_OF_MONTH)) {c.add(Calendar.WEEK_OF_YEAR, 1);}");
+        vM.addBody("return new TimeWrapperScope(c, wadm);");
+        methodlist.add(vM.getTheMethod());
         
-        method = new HashMap(); //Neue Methode
-        method.put("type","MinuteScope");
-        method.put("name", "in");
-        methodlist.add(method);
+        vM = new VeloMethodBuilder("public", "YearScope", "on");
+        vM.addBody("return new YearScope(new GregorianCalendar());");
+        methodlist.add(vM.getTheMethod());
         
-        method = new HashMap(); //Neue Methode
-        method.put("type","YearScope");
-        method.put("name", "on");
-        methodpara = new ArrayList();
-        methodpara.add("new GregorianCalendar()");
-        method.put("paras", methodpara);
-        methodlist.add(method);
+        vM = new VeloMethodBuilder("public", "TimeWrapperScope", "today");
+        vM.addBody("return new TimeWrapperScope(new GregorianCalendar(), null);");
+        methodlist.add(vM.getTheMethod());
         
-        method = new HashMap(); //Neue Methode
-        method.put("type","TimeWrapperScope");
-        method.put("name", "today");
-        methodpara = new ArrayList();
-        methodpara.add("new GregorianCalendar()");
-        methodpara.add("null");
-        method.put("paras", methodpara);
-        methodlist.add(method);
-
         context.put("SimpleMethods", methodlist);
-        
-//        //New Classes in
-//        newclass = new HashMap();
-//        newclass.put("type", "MinuteScope");
-//        //Neue Methode der Klasse
-//        methodlist = new ArrayList();
-//        method = new HashMap();
-//        method.put("mod", "public");
-//        method.put("type", "AlarmProperties");
-//        method.put("name", "minutes");
-//        methodpara = new ArrayList();
-//        methodpara.add("int minutes");
-//        method.put("paras", methodpara);
-//        methodbody.add("GregorianCalendar c = new GregorianCalendar();");
-//        methodbody.add("c.add(Calendar.MINUTE, minutes);");
-//        methodbody.add("return new AlarmProperties(c, null);");
-//        method.put("lines", methodbody);
-//        methodlist.add(method);
-//        
-//        newclass.put("methods", methodlist);
-//        classlist.add(newclass);
-        
-//        //New Klasse in
-//        newclass = new HashMap();
-//        newclass.put("type", "YearScope");
-//        //Neue Attribute
-//        attributlist = new ArrayList();
-//        //attributlist.add(vb.getNewAttribute("private", "GregorianCalendar", "c"));
-//        
-//        
-//        //Neue Methode der Klasse
-//        methodlist = new ArrayList(); //Reset Methodenliste
-//        method = new HashMap();
-//        method.put("mod", "public");
-//        method.put("type", "MonthScope");
-//        method.put("name", "year");
-//        methodpara = new ArrayList();
-//        methodpara.add("int year");
-//        method.put("paras", methodpara);
-//        methodbody = new ArrayList();
-//        methodbody.add("c.set(Calendar.YEAR, year);");
-//        methodbody.add("return new MonthScope(c);");
-//        method.put("lines", methodbody);
-//        methodlist.add(method);
-//        
-//        //Neue Methode der Klasse
-//        method = new HashMap();
-//        method.put("mod", "public");
-//        method.put("type", "MonthScope");
-//        method.put("name", "ThisYear");
-//        methodbody = new ArrayList();
-//        methodbody.add("return new MonthScope(c);");
-//        method.put("lines", methodbody);
-//        methodlist.add(method);
-//        //Füge Attribute, Methoden der Klasse hinzu
-//        newclass.put("attributes", attributlist);
-//        newclass.put("methods", methodlist);
-//        classlist.add(newclass);
-        
       
       //Neue Klasse erstellen
         VeloClassBuilder nC = new VeloClassBuilder("MinuteScope");
@@ -164,6 +96,22 @@ public class SimpelVelocity
         classlist.add(nC.getTheClass());
         
       //Neue Klasse erstellen
+        nC = new VeloClassBuilder("DayScope");
+        nC.addNewConstructor("private", "GregorianCalendar c");
+        nC.addNewAttribute("private", "GregorianCalendar", "c");
+        nC.addNewMethod("public", "TimeWrapperScope", "day");
+        nC.getLastMethod().addPara("int day");
+        nC.getLastMethod().addBody("int currMonth = c.get(Calendar.MONTH);");
+        nC.getLastMethod().addBody("int highestDay;");
+        nC.getLastMethod().addBody("if (currMonth == 1) {ighestDay = 28;}");
+        nC.getLastMethod().addBody("else if ((currMonth % 2) == 0) {highestDay = 31;}");
+        nC.getLastMethod().addBody("else {highestDay = 30;}");
+        nC.getLastMethod().addBody("if (day < 1 || day > highestDay) {throw new IllegalArgumentException(ALARM_DATE_INVALID_MSG);}");
+        nC.getLastMethod().addBody("c.set(Calendar.DAY_OF_MONTH, day);");
+        nC.getLastMethod().addBody("return new TimeWrapperScope(c, null);");
+        classlist.add(nC.getTheClass());
+        
+      //Neue Klasse erstellen
         nC = new VeloClassBuilder("TimeWrapperScope");
         nC.addNewConstructor("private", "GregorianCalendar c", "WeekAndDayMemorie wadm");
         nC.addNewAttribute("private", "GregorianCalendar", "c");
@@ -171,7 +119,78 @@ public class SimpelVelocity
         nC.addNewMethod("public", "HourScope", "at");
         nC.getLastMethod().addBody("return new HourScope(c, wadm);");
         classlist.add(nC.getTheClass());
+        
+      //Neue Klasse erstellen
+        nC = new VeloClassBuilder("HourScope");
+        nC.addNewConstructor("private", "GregorianCalendar c", "WeekAndDayMemorie wadm");
+        nC.addNewAttribute("private", "GregorianCalendar", "c");
+        nC.addNewAttribute("private", "WeekAndDayMemorie", "wadm");
+        nC.addNewMethod("public", "TimeMinuteScope", "hour");
+        nC.getLastMethod().addPara("int hour");
+        nC.getLastMethod().addBody("if (hour < 0 || hour > 23) {throw new IllegalArgumentException(ALARM_DATE_INVALID_MSG);}");
+        nC.getLastMethod().addBody("c.set(Calendar.HOUR_OF_DAY, hour);");
+        nC.getLastMethod().addBody("return new TimeMinuteScope(c, wadm);");
+        classlist.add(nC.getTheClass());
+        
+      //Neue Klasse erstellen
+        nC = new VeloClassBuilder("TimeMinuteScope");
+        nC.addNewConstructor("private", "GregorianCalendar c", "WeekAndDayMemorie wadm");
+        nC.addNewAttribute("private", "GregorianCalendar", "c");
+        nC.addNewAttribute("private", "WeekAndDayMemorie", "wadm");
+        nC.addNewMethod("public", "AlarmProperties", "minute");
+        nC.getLastMethod().addPara("int minute");
+        nC.getLastMethod().addBody("if (minute < 0 || minute > 59) {throw new IllegalArgumentException(ALARM_DATE_INVALID_MSG);}");
+        nC.getLastMethod().addBody("c.set(Calendar.MINUTE, minute);");
+        nC.getLastMethod().addBody("return new TimeMinuteScope(c, wadm);");
+        classlist.add(nC.getTheClass());
+        
+      //Neue Klasse erstellen
+        nC = new VeloClassBuilder("WeekScope");
+        nC.addNewConstructor("private", "GregorianCalendar c", "WeekAndDayMemorie wadm");
+        nC.addNewAttribute("private", "GregorianCalendar", "c");
+        nC.addNewAttribute("private", "WeekAndDayMemorie", "wadm");
+        nC.addNewMethod("public", "DayWrapperScope", "weeks");
+        nC.getLastMethod().addPara("int weeks");
+        nC.getLastMethod().addBody("if (weeks < 1) {throw new IllegalArgumentException(ALARM_DATE_INVALID_MSG);}");
+        nC.getLastMethod().addBody("wadm.setWeeks(weeks);");
+        nC.getLastMethod().addBody("return new DayWrapperScope(c, wadm);");
+        nC.addNewMethod("public", "DayWrapperScope", "week");
+        nC.getLastMethod().addBody("wadm.setWeeks(1);");
+        nC.getLastMethod().addBody("return new DayWrapperScope(c, wadm);");
+        classlist.add(nC.getTheClass());
 
+      //Neue Klasse erstellen
+        nC = new VeloClassBuilder("DayWrapperScope");
+        nC.addNewConstructor("private", "GregorianCalendar c", "WeekAndDayMemorie wadm");
+        nC.addNewAttribute("private", "GregorianCalendar", "c");
+        nC.addNewAttribute("private", "WeekAndDayMemorie", "wadm");
+        nC.addNewMethod("public", "TimeWrapperScope", "on");
+        nC.getLastMethod().addPara("Day... days");
+        nC.getLastMethod().addBody("for (Day day : days) {wadm.addDay(day);}");
+        nC.getLastMethod().addBody("int oldVal = c.get(Calendar.DAY_OF_MONTH);");
+        nC.getLastMethod().addBody("c.set(Calendar.DAY_OF_WEEK, (days[0].ordinal() + 2 > 7) ? 1 : days[0].ordinal() + 2);");
+        nC.getLastMethod().addBody("if (oldVal > c.get(Calendar.DAY_OF_MONTH)) {c.add(Calendar.WEEK_OF_YEAR, 1);}");
+        nC.getLastMethod().addBody("return new TimeWrapperScope(c, wadm);");
+        classlist.add(nC.getTheClass());
+        
+      //Neue Klasse erstellen
+        nC = new VeloClassBuilder("WeekAndDayMemorie");
+        nC.addNewAttribute("private", "int", "weeks");
+        nC.addNewAttribute("private", "LinkedList<Day>", "days");
+        nC.addNewNoParaConstructor("private", "0", "new LinkedList<Day>()");
+        nC.addNewMethod("public", "void", "setWeeks");
+        nC.getLastMethod().addPara("int weeks");
+        nC.getLastMethod().addBody("if (weeks < 1) {throw new IllegalArgumentException(ALARM_DATE_INVALID_MSG);}");
+        nC.getLastMethod().addBody("this.weeks = weeks;");
+        nC.addNewMethod("public", "void", "addDay");
+        nC.getLastMethod().addPara("Day day");
+        nC.getLastMethod().addBody("if (!this.days.contains(day)) {days.add(day);}");
+        nC.addNewMethod("public", "int", "getWeeks()");
+        nC.getLastMethod().addBody("return weeks;");
+        nC.addNewMethod("public", "LinkedList<Day>", "getDays");
+        nC.getLastMethod().addBody("return days");
+        classlist.add(nC.getTheClass());
+        
         context.put("SimpleClasses", classlist);
     
         StringWriter writer = new StringWriter();
